@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import Alerta from './components/Alerta.vue'
 const monedas = ref([
     { codigo: 'USD', texto: 'Dolar de Estados Unidos'},
@@ -44,6 +44,11 @@ const obtenerCotizacion = async() => {
 
     cotizacion.value = data.DISPLAY[criptomoneda][moneda]
 }
+
+const mostrarResultado = computed(() => {
+    return Object.values(cotizacion.value).length > 0
+})
+
 </script>
 
 <template>
@@ -93,6 +98,26 @@ const obtenerCotizacion = async() => {
                     value="Cotizar" 
                 />
             </form>
+
+            <div 
+                class="contenedor-resultado"
+                v-if="mostrarResultado"    
+            >
+                <h2>Cotización</h2>
+                <div class="resultado">
+                    <img 
+                        :src="`http://cryptocompare.com/${cotizacion.IMAGEURL}`"
+                        alt="imagen cripto"
+                    >
+                    <div>
+                        <p>El precio es de: <span>{{ cotizacion.PRICE }}</span></p>
+                        <p>El precio más alto del día: <span>{{ cotizacion.HIGHDAY }}</span></p>
+                        <p>El precio más bajo del día: <span>{{ cotizacion.LOWDAY }}</span></p>
+                        <p>Variación últimas 24 horas: <span>{{ cotizacion.CHANGEPCT24HOUR }}%</span></p>
+                        <p>Última actualización: <span>{{ cotizacion.LASTUPDATE }}</span></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
